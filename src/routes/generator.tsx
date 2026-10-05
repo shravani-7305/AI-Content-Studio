@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Copy, Download, Loader2, Pencil, Save, Sparkles, PenLine, AlertCircle, Check } from "lucide-react";
+import { Copy, Download, Loader2, Pencil, Save, Sparkles, PenLine, AlertCircle, Check, FileText, ImageIcon, Film } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MediaGenerator } from "@/components/media-generator";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +27,24 @@ export const Route = createFileRoute("/generator")({
 });
 
 function Generator() {
+  return (
+    <>
+      <PageHeader icon={PenLine} title="AI Content Generator" subtitle="Create text, images and videos from a simple prompt." />
+      <Tabs defaultValue="text">
+        <TabsList className="mb-6 h-auto rounded-xl bg-muted p-1">
+          <TabsTrigger value="text" className="gap-2 rounded-lg px-4 py-2"><FileText className="size-4" /> Text</TabsTrigger>
+          <TabsTrigger value="image" className="gap-2 rounded-lg px-4 py-2"><ImageIcon className="size-4" /> Image</TabsTrigger>
+          <TabsTrigger value="video" className="gap-2 rounded-lg px-4 py-2"><Film className="size-4" /> Video</TabsTrigger>
+        </TabsList>
+        <TabsContent value="text"><TextGenerator /></TabsContent>
+        <TabsContent value="image"><MediaGenerator kind="image" /></TabsContent>
+        <TabsContent value="video"><MediaGenerator kind="video" /></TabsContent>
+      </Tabs>
+    </>
+  );
+}
+
+function TextGenerator() {
   const [topic, setTopic] = useState("");
   const [contentType, setType] = useState<ContentType>("Blog");
   const [tone, setTone] = useState<Tone>("Professional");
@@ -62,7 +82,6 @@ function Generator() {
 
   return (
     <>
-      <PageHeader icon={PenLine} title="AI Content Generator" subtitle="Describe what you need and let AI write it." />
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
         <Panel>
           <form onSubmit={onGenerate} className="space-y-5">
