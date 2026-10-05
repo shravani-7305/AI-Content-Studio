@@ -26,7 +26,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     if (password.length < 6) return setError("Password must be at least 6 characters.");
     setLoading(true);
     await new Promise((r) => setTimeout(r, 700));
-    authStore.signIn({ name: signup ? name.trim() : email.split("@")[0], email });
+    authStore.signIn({ name: signup ? name.trim() : (email.split("@")[0] ?? email), email });
     toast.success(signup ? "Account created!" : "Welcome back!");
     navigate({ to: "/dashboard" });
   }
