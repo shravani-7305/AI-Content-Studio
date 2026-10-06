@@ -17,6 +17,10 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SeoRouteImport } from './routes/seo'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
+import { Route as ApiVideoRouteImport } from './routes/api/video'
+import { Route as ApiVideoIdRouteImport } from './routes/api/video.$id'
+import { Route as ApiVideoIdContentRouteImport } from './routes/api/video.$id.content'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +62,26 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
+  id: '/api/generate-image',
+  path: '/api/generate-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVideoRoute = ApiVideoRouteImport.update({
+  id: '/api/video',
+  path: '/api/video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVideoIdRoute = ApiVideoIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiVideoRoute,
+} as any)
+const ApiVideoIdContentRoute = ApiVideoIdContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => ApiVideoIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +92,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/seo': typeof SeoRoute
   '/signup': typeof SignupRoute
+  '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/video': typeof ApiVideoRouteWithChildren
+  '/api/video/$id': typeof ApiVideoIdRouteWithChildren
+  '/api/video/$id/content': typeof ApiVideoIdContentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +106,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/seo': typeof SeoRoute
   '/signup': typeof SignupRoute
+  '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/video': typeof ApiVideoRouteWithChildren
+  '/api/video/$id': typeof ApiVideoIdRouteWithChildren
+  '/api/video/$id/content': typeof ApiVideoIdContentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +121,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/seo': typeof SeoRoute
   '/signup': typeof SignupRoute
+  '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/video': typeof ApiVideoRouteWithChildren
+  '/api/video/$id': typeof ApiVideoIdRouteWithChildren
+  '/api/video/$id/content': typeof ApiVideoIdContentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +137,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/seo'
     | '/signup'
+    | '/api/generate-image'
+    | '/api/video'
+    | '/api/video/$id'
+    | '/api/video/$id/content'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +151,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/seo'
     | '/signup'
+    | '/api/generate-image'
+    | '/api/video'
+    | '/api/video/$id'
+    | '/api/video/$id/content'
   id:
     | '__root__'
     | '/'
@@ -121,6 +165,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/seo'
     | '/signup'
+    | '/api/generate-image'
+    | '/api/video'
+    | '/api/video/$id'
+    | '/api/video/$id/content'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +180,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SeoRoute: typeof SeoRoute
   SignupRoute: typeof SignupRoute
+  ApiGenerateImageRoute: typeof ApiGenerateImageRoute
+  ApiVideoRoute: typeof ApiVideoRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -192,8 +242,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/generate-image': {
+      id: '/api/generate-image'
+      path: '/api/generate-image'
+      fullPath: '/api/generate-image'
+      preLoaderRoute: typeof ApiGenerateImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/video': {
+      id: '/api/video'
+      path: '/api/video'
+      fullPath: '/api/video'
+      preLoaderRoute: typeof ApiVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/video/$id': {
+      id: '/api/video/$id'
+      path: '/$id'
+      fullPath: '/api/video/$id'
+      preLoaderRoute: typeof ApiVideoIdRouteImport
+      parentRoute: typeof ApiVideoRoute
+    }
+    '/api/video/$id/content': {
+      id: '/api/video/$id/content'
+      path: '/content'
+      fullPath: '/api/video/$id/content'
+      preLoaderRoute: typeof ApiVideoIdContentRouteImport
+      parentRoute: typeof ApiVideoIdRoute
+    }
   }
 }
+
+interface ApiVideoIdRouteChildren {
+  ApiVideoIdContentRoute: typeof ApiVideoIdContentRoute
+}
+
+const ApiVideoIdRouteChildren: ApiVideoIdRouteChildren = {
+  ApiVideoIdContentRoute: ApiVideoIdContentRoute,
+}
+
+const ApiVideoIdRouteWithChildren = ApiVideoIdRoute._addFileChildren(
+  ApiVideoIdRouteChildren,
+)
+
+interface ApiVideoRouteChildren {
+  ApiVideoIdRoute: typeof ApiVideoIdRouteWithChildren
+}
+
+const ApiVideoRouteChildren: ApiVideoRouteChildren = {
+  ApiVideoIdRoute: ApiVideoIdRouteWithChildren,
+}
+
+const ApiVideoRouteWithChildren = ApiVideoRoute._addFileChildren(
+  ApiVideoRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -204,6 +306,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SeoRoute: SeoRoute,
   SignupRoute: SignupRoute,
+  ApiGenerateImageRoute: ApiGenerateImageRoute,
+  ApiVideoRoute: ApiVideoRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
