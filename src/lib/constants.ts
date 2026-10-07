@@ -62,5 +62,5 @@ export interface HistoryItem extends Omit<GenerateRequest, "contentType"> {
   content: string;
   createdAt: string;
   kind?: "text" | MediaKind;
-  media?: MediaRequest & { url?: string };
+  media?: MediaRequest & { url?: string | undefined };
 }
