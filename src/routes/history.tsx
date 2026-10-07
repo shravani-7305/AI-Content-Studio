@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Copy, Eye, History as HistoryIcon, Pencil, Trash2, Search } from "lucide-react";
+import { Copy, Eye, Film, History as HistoryIcon, Pencil, Trash2, Search } from "lucide-react";
+
+const KIND_LABEL = { text: "Text", image: "Image", video: "Video" } as const;
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,9 +54,20 @@ function HistoryPage() {
           {filtered.map((item) => (
             <Panel key={item.id} className="flex flex-col">
               <div className="flex items-start justify-between gap-3">
-                <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">{item.contentType}</span>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">{KIND_LABEL[item.kind ?? "text"]}</span>
+                  {(item.kind ?? "text") === "text" && <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">{item.contentType}</span>}
+                </div>
                 <span className="text-xs text-muted-foreground">{timeAgo(item.createdAt)}</span>
               </div>
+              {item.kind === "image" && item.media?.url && (
+                <img src={item.media.url} alt={item.topic} className="mt-3 h-40 w-full rounded-xl object-cover" />
+              )}
+              {item.kind === "video" && (
+                <div className="mt-3 flex h-40 items-center justify-center gap-2 rounded-xl bg-gradient-soft text-sm text-primary">
+                  <Film className="size-5" /> {item.media?.duration ?? 4}s video
+                </div>
+              )}
               <h3 className="mt-3 font-semibold">{item.topic}</h3>
               <p className="mt-1 line-clamp-2 flex-1 text-sm text-muted-foreground">{item.content}</p>
               <p className="mt-2 text-xs text-muted-foreground">{item.tone} · {item.length}</p>
@@ -74,6 +87,10 @@ function HistoryPage() {
       <Dialog open={!!view} onOpenChange={(o) => !o && setView(null)}>
         <DialogContent className="max-w-2xl rounded-2xl">
           <DialogHeader><DialogTitle>{view?.topic}</DialogTitle></DialogHeader>
+          {view?.kind === "image" && view.media?.url && <img src={view.media.url} alt={view.topic} className="max-h-[50vh] w-full rounded-xl object-contain" />}
+          {view?.kind === "video" && (
+            <p className="rounded-xl bg-accent px-3 py-2 text-xs text-accent-foreground">Video files aren't stored in history — use Download when generating to keep the file. Prompt and settings are below.</p>
+          )}
           <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">{view?.content}</div>
         </DialogContent>
       </Dialog>

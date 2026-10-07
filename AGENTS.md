@@ -13,3 +13,4 @@
 - AI calls go through `src/lib/ai-service.ts` only — so swapping demo output for a real AI API touches one file.
 - Persistence (history, user) goes through `src/lib/store.ts` — localStorage now, replaceable by a database without UI changes.
 - App chrome (sidebar nav) lives in `src/components/app-shell.tsx`, rendered by `__root.tsx` around the Outlet.
+- Image/video generation runs through server routes in `src/routes/api/` (generate-image, video, video/$id, video/$id/content) — keeps the AI key server-side; browser calls go through `src/lib/media-service.ts`.
